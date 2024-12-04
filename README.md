@@ -13,3 +13,7 @@ Một đơn vị cần xây dựng hệ thống giám sát "sức khoẻ" của 
  - Container thứ nhất gồm 1 API endpoint cập nhật thông tin giá ngoại tệ so với VNĐ.
  
  Tham khảo [uptime.com](https://uptime.com/).
+
+docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:ro --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --detach=true --name=cadvisor gcr.io/cadvisor/cadvisor:latest
+
+docker stats
