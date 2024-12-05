@@ -1,0 +1,35 @@
+version: '3.8'  # Phiên bản của Docker Compose
+
+services:
+  gold-price:  # Tên dịch vụ
+    image: gold-price-server
+    # build: 
+    #   context: .
+    #   dockerfile: ./goldPrice/Dockerfile
+    ports:
+      - 8001:8001
+  foreign-currency:  # Tên dịch vụ
+    image: foreign-currency-server
+    # build: 
+    #   context: .
+    #   dockerfile: ./foreignCurrency/Dockerfile
+    ports:
+      - 5000:5000
+
+  cadvisor:
+      image: gcr.io/cadvisor/cadvisor:v0.51.0
+      ports:
+      - 8080:8080
+      privileged: true
+      devices:
+        - /dev/kmsg
+      volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
+  
