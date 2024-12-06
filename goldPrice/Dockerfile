@@ -5,16 +5,15 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package.json và package-lock.json
-COPY package*.json ./
+COPY ./goldprice/package*.json ./
 
 # Cài đặt các thư viện
 RUN npm install
 
 # Copy các file server vào trong container
-COPY . .
+COPY ./goldprice .
 
-EXPOSE 8001
-#EXPOSE 5001
+EXPOSE 3008
 
-# Chạy cả hai server
-CMD ["sh", "-c", "node server8001.js"]
+# Chạy server
+CMD ["sh", "-c", "node goldprice.js"]

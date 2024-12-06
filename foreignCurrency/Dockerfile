@@ -5,17 +5,15 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package.json và package-lock.json
-COPY package*.json ./
+COPY ./foreigncurrency/package*.json ./
 
 # Cài đặt các thư viện
 RUN npm install
 
 # Copy các file server vào trong container
-COPY . .
+COPY ./foreigncurrency .
 
-# Expose cổng cho server 8000 và 5000
-EXPOSE 8000
-EXPOSE 5000
+EXPOSE 3009
 
-# Chạy cả hai server
-CMD ["sh", "-c", "node server8000.js & node server5000.js"]
+# Chạy server
+CMD ["sh", "-c", "node foreigncurrency.js"]
