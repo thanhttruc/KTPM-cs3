@@ -6,14 +6,29 @@ Một đơn vị cần xây dựng hệ thống giám sát "sức khoẻ" của 
  - Hiển thị *realtime* các tài nguyên như RAM/Bộ nhớ/Băng thông mạng của máy chủ
  - Xây dựng biểu đồ lưu lượng truy cập.
 
-Đối với hệ thống cần giám sát cần xây dựng:
 
- - Ít nhất 2 container docker
- - Container thứ nhất gồm 1 API endpoint cập nhật thông tin giá vàng tại Việt Nam
- - Container thứ nhất gồm 1 API endpoint cập nhật thông tin giá ngoại tệ so với VNĐ.
- 
- Tham khảo [uptime.com](https://uptime.com/).
+Kiến trúc hệ thống: 
+ - Container 1: Chạy một API cung cấp thông tin giá vàng tại Việt Nam, chạy trên cổng 5000.
+ - Container 2: Chạy một API cung cấp thông tin giá ngoại tệ so với VNĐ, chạy trên cổng 8001.
+ - Prometheus: Thu thập các chỉ số từ các container và hệ thống máy chủ (CPU, RAM, băng thông, v.v.).
+- Grafana: Hiển thị các dữ liệu thu thập được từ Prometheus thông qua dashboard tùy chỉnh, bao gồm cả tình trạng container và các biểu đồ lưu lượng truy cập.
 
-docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:ro --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --detach=true --name=cadvisor gcr.io/cadvisor/cadvisor:latest
+Các bước kiểm thử và triển khai:
+- Bước 1: 
+    npm install
 
-docker stats
+    docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:ro --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --detach=true --name=cadvisor gcr.io/cadvisor/cadvisor:latest
+
+    docker stats
+
+    foreigncurrency.js
+    goldprice.js
+
+    Khởi động Prometheus và Grafana: docker-compose up -d
+
+- Bước 2: 
+Kiểm tra các API: Truy cập http://localhost:3009/api/foreign-currency và http://localhost:3008/api/gold-price .
+
+Prometheus: Truy cập tại http://localhost:9090.
+
+
