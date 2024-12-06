@@ -53,3 +53,5 @@ services:
     restart: always
     depends_on:
     - prometheus
+    - gold-price
+    - foreign-currency
