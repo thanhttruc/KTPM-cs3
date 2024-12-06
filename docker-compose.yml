@@ -3,6 +3,7 @@ version: '3.8'
 services:
   gold-price:  
     image: gold-price-server
+    container_name: goldprice
     # build: 
     #   context: ./goldprice
     #   dockerfile: ./goldprice/Dockerfile
@@ -10,12 +11,22 @@ services:
       - 8001:8001
   foreign-currency:  
     image: foreign-currency-server
+    container_name: foreigncurrency
     # build: 
     #   context: ./foreigncurrency
     #   dockerfile: ./foreigncurrency/Dockerfile
     ports:
       - 5000:5000
-
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports:
+    - 9090:9090
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+    - cadvisor
   cadvisor:
       image: gcr.io/cadvisor/cadvisor:v0.51.0
       ports:
