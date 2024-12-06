@@ -1,18 +1,18 @@
-version: '3.8'  # Phiên bản của Docker Compose
+version: '3.8'  
 
 services:
-  gold-price:  # Tên dịch vụ
+  gold-price:  
     image: gold-price-server
     # build: 
-    #   context: .
-    #   dockerfile: ./goldPrice/Dockerfile
+    #   context: ./goldprice
+    #   dockerfile: ./goldprice/Dockerfile
     ports:
       - 8001:8001
-  foreign-currency:  # Tên dịch vụ
+  foreign-currency:  
     image: foreign-currency-server
     # build: 
-    #   context: .
-    #   dockerfile: ./foreignCurrency/Dockerfile
+    #   context: ./foreigncurrency
+    #   dockerfile: ./foreigncurrency/Dockerfile
     ports:
       - 5000:5000
 
