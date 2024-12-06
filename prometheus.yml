@@ -4,4 +4,13 @@ scrape_configs:
   static_configs:
   - targets:
     - cadvisor:8080
+- job_name: gold-price 
+  static_configs:
+  - targets: 
+    - gold-price:3008 #Our express app container
+- job_name: foreign-currency
+  static_configs:
+  - targets: 
+    - foreign-currency:3009 #Our express app container
+
 
