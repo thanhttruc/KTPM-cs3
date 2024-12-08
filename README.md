@@ -1,27 +1,56 @@
-
-Kiến trúc hệ thống: 
- - Container 1: Chạy một API cung cấp thông tin giá vàng tại Việt Nam, chạy trên cổng 3008, trả về dữ liệu là 
- - Container 2: Chạy một API cung cấp thông tin giá ngoại tệ so với VNĐ, chạy trên cổng 3009.
+# Health Endpoint Monitoring
+## Sơ lược về bài toán: 
+ Một đơn vị cần xây dựng hệ thống giám sát "sức khoẻ" của các services trong hạ tầng của họ. Sử dụng những kiến thức về Health Endpoint Monitoring để xây dựng cho mình một trang web quản lý nhưng thông tin sau:
+ - Tình trạng (up/down) của các container
+ - Tình trạng (up/down) của các endpoint
+ - Hiển thị realtime các tài nguyên như RAM/Bộ nhớ/Băng thông mạng của máy chủ
+ - Xây dựng biểu đồ lưu lượng truy cập.
+## Kiến trúc hệ thống: 
+ - Container 1: Chạy một API cung cấp thông tin giá vàng tại Việt Nam, chạy trên cổng 3008. API Giá vàng:
+ 
+   http://giavang.doji.vn/ (Doji)
+ - Container 2: Chạy một API cung cấp thông tin giá ngoại tệ so với VNĐ, chạy trên cổng 3009. API Giá ngoại tệ:
+ 
+   https://www.vietcombank.com.vn/vi-VN/To-chuc/Doanh-Nghi%E1%BB%87p/KHTC---Ty-gia (Vietcombank)
+ - cAdvisor: Open source của Google phân tích tổng quan các container.
  - Prometheus: Thu thập các chỉ số từ các container và hệ thống máy chủ (CPU, RAM, băng thông, v.v.).
-- Grafana: Hiển thị các dữ liệu thu thập được từ Prometheus thông qua dashboard tùy chỉnh, bao gồm cả tình trạng container và các biểu đồ lưu lượng truy cập.
+ - Grafana: Hiển thị các dữ liệu thu thập được từ Prometheus thông qua dashboard tùy chỉnh, bao gồm cả tình trạng container và các biểu đồ lưu lượng truy cập.
+## Các bước cài đặt:
+ *Lỗi gặp trên Window Sử dụng WSL và DockerDesktop có dạng: * 
+ 
+ ```cadvisor | E0823 20:34:34.010493 1 manager.go:1084] Failed to create existing container: /docker/{tên container ví dụ: f8b0931d2a1809803906b9e25bb8285438ccabfbfc96e8a7b82cdd29d38a15d9}: failed to identify the read-write layer ID for container "f8b0931d2a1809803906b9e25bb8285438ccabfbfc96e8a7b82cdd29d38a15d9". - open /var/lib/docker/image/overlay2/layerdb/mounts/f8b0931d2a1809803906b9e25bb8285438ccabfbfc96e8a7b82cdd29d38a15d9/mount-id: no such file or directory``` 
+ 
+ Lí do: cAdvisor bị lỗi khi xác định vị trí của container. Nhưng vẫn nhận diện được docker driver =)))
+ 
+ => Chuyển sang Ubuntu (22.04)
+ Các bước kiểm thử và triển khai:
 
-Các bước kiểm thử và triển khai:
-- Bước 1: 
-    Tải về các thư viện: npm install
+**Phần 1:**
+  - Clone github repository: ```git clone https://github.com/tthanh25/KTPM-cs3```
+  
+  - Chuyển tới thư mục KTPM-cs3: ```cd .\KTPM-cs3\```
 
-    Khởi động Prometheus và Grafana: docker-compose up -d
+  - Tải về các thư viện cần thiết: ```npm install```
 
-    Chạy localhost:  node foreigncurrency.js
-                     node goldprice.js
+  - Xây dựng các Image và chạy các Container: ```docker-compose up -d```
+  
+  - Đợi quá trình hoàn tất, các bạn có thể tải Docker Desktop để có thể tiện xử lí và theo dõi.
 
+  - Lệnh để kiểm tra trạng thái các container: ```docker stats```
 
+![image](https://github.com/user-attachments/assets/b0a3a780-633b-42ff-8d50-20e52d2fb1a9)
 
-- Bước 2: 
-Kiểm tra các API: Truy cập http://localhost:3008/api/gold-price , http://localhost:3008/metrics
- và http://localhost:3009/api/foreign-currency, http://localhost:3009/metrics .
+  P/S: Khi các bạn gõ lệnh ```docker stats``` thì các thông tin về RAM,CPU,Network,... ở terminal đã được hiện ra rồi. Muốn chi tiết và trực quan hơn nữa chúng ta sẽ sử dụng Prometheus và Grafana để quan sát và quản lí chi tiết các thông số hơn.
 
-Prometheus: Truy cập tại http://localhost:9090.
-Grafana : Truy cập tại http://localhost:4000
- - Bước 3: 
-
+**Phần 2:** 
+ - Kiểm tra các API: Truy cập ```http://localhost:3008/api/gold-price``` , ```http://localhost:3008/metrics```
+  và ```http://localhost:3009/api/foreign-currency```, ```http://localhost:3009/metrics```
+ trang ```/api/*``` biểu diễn các dữ liệu về API giá vàng và ngoại tệ.
+ trang ```/metrics``` chứa các thông số về hệ thống, các request,...
+ 
+ - Prometheus: Truy cập tại ```http://localhost:9090```
+ - Grafana : Truy cập tại ```http://localhost:4000```
+ - Sau khi truy cập Grafana các bạn nhập tài khoản và mật khẩu đều là "admin". Sau đó sẽ yêu cầu bạn đổi mật khẩu mới nên skip cũng được.
+ 
+ - Mình đã xây dựng dashboard nên các bạn vào dashboard -> main để theo dõi các container trong hệ thống cần theo dõi nha.
 
