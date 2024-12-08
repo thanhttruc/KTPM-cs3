@@ -22,8 +22,23 @@
  
  Lí do: cAdvisor bị lỗi khi xác định vị trí của container. Nhưng vẫn nhận diện được docker driver =)))
  
- => Chuyển sang Ubuntu (22.04)
- Các bước kiểm thử và triển khai:
+ => Chuyển sang **Ubuntu (22.04)**
+ 
+Cần cài đặt để tránh lỗi về quyền hạn (Permission dennied)
+
+Cách 1: Sử dụng sudo cho mọi câu lệnh. 
+Cách 2: 
+  - Thêm group docker: ```sudo groupadd docker```
+  - Thêm user hiện tại vào group: ```sudo usermod -aG docker $USER```
+  - Check user hiện tại có các trong các group nào: ```groups```
+  - Restart Ubuntu.
+  - Bạn cần thêm một số bước để thêm quyền hạn đặc biệt khi chạy để có thể đọc ghi một số file đặc biệt:
+    + ```sudo chown root:docker /var/run/docker.sock```
+    + ```sudo chown "$USER":"$USER" /home/"$USER"/.docker -R```
+    + ```sudo chmod g+rwx "$HOME/.docker" -R```
+    
+ 
+ **Các triển khai:**
 
 **Phần 1:**
   - Clone github repository: ```git clone https://github.com/tthanh25/KTPM-cs3```
@@ -53,4 +68,7 @@
  - Sau khi truy cập Grafana các bạn nhập tài khoản và mật khẩu đều là "admin". Sau đó sẽ yêu cầu bạn đổi mật khẩu mới nên skip cũng được.
  
  - Mình đã xây dựng dashboard nên các bạn vào dashboard -> main để theo dõi các container trong hệ thống cần theo dõi nha.
+![image](https://github.com/user-attachments/assets/156347e8-7093-47e8-9a6b-e7665ed7e396)
+![image](https://github.com/user-attachments/assets/21cfe4c9-e97b-4bb4-9cb8-32d91bca9bdd)
+
 
