@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tỷ Giá Ngoại Tệ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .date {
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        .source {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tỷ Giá Ngoại Tệ</h1>
+        <p class="date" id="updateTime"></p>
+        <table id="currencyTable">
+            <thead>
+                <tr>
+                    <th>Mã Tiền Tệ</th>
+                    <th>Tên Tiền Tệ</th>
+                    <th>Mua</th>
+                    <th>Chuyển Khoản</th>
+                    <th>Bán</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dữ liệu sẽ được thêm vào đây thông qua JavaScript -->
+            </tbody>
+        </table>
+        <p class="source">Nguồn: Joint Stock Commercial Bank for Foreign Trade of Vietnam - Vietcombank</p>
+    </div>
+
+    <script>
+        // Hàm để lấy dữ liệu từ API và hiển thị lên trang
+        async function fetchCurrencyData() {
+            try {
+                const response = await fetch('http://localhost:3009/api/foreign-currency');
+                const data = await response.text();
+                
+                // Tạo một DOM parser để chuyển đổi XML thành HTML
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data, "text/xml");
+                
+                // Lấy thời gian cập nhật
+                const dateTime = xmlDoc.getElementsByTagName('DateTime')[0].textContent;
+                document.getElementById('updateTime').textContent = `Cập nhật lúc: ${dateTime}`;
+                
+                // Lấy tất cả các thông tin tỷ giá
+                const exrates = xmlDoc.getElementsByTagName('Exrate');
+                const tableBody = document.getElementById('currencyTable').getElementsByTagName('tbody')[0];
+                
+                // Duyệt qua tất cả tỷ giá và thêm vào bảng
+                for (let exrate of exrates) {
+                    const row = document.createElement('tr');
+                    
+                    const currencyCode = exrate.getAttribute('CurrencyCode');
+                    const currencyName = exrate.getAttribute('CurrencyName');
+                    const buy = exrate.getAttribute('Buy');
+                    const transfer = exrate.getAttribute('Transfer');
+                    const sell = exrate.getAttribute('Sell');
+                    
+                    row.innerHTML = `
+                        <td>${currencyCode}</td>
+                        <td>${currencyName}</td>
+                        <td>${buy}</td>
+                        <td>${transfer}</td>
+                        <td>${sell}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy dữ liệu:', error);
+            }
+        }
+
+        // Gọi hàm fetchCurrencyData khi trang được tải
+        window.onload = fetchCurrencyData;
+    </script>
+</body>
+</html>

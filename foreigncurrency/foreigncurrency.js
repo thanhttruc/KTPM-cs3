@@ -4,6 +4,9 @@ const promBundle = require('express-prom-bundle');
 
 const app = express();
 const PORT = 3009;
+const cors = require('cors');
+app.use(cors());
+
 
 // Cấu hình middleware metrics
 const metricsMiddleware = promBundle({
