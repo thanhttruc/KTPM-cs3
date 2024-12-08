@@ -64,32 +64,26 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Dữ liệu sẽ được thêm vào đây thông qua JavaScript -->
             </tbody>
         </table>
         <p class="source">Nguồn: Joint Stock Commercial Bank for Foreign Trade of Vietnam - Vietcombank</p>
     </div>
 
     <script>
-        // Hàm để lấy dữ liệu từ API và hiển thị lên trang
         async function fetchCurrencyData() {
             try {
                 const response = await fetch('http://localhost:3009/api/foreign-currency');
                 const data = await response.text();
                 
-                // Tạo một DOM parser để chuyển đổi XML thành HTML
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(data, "text/xml");
                 
-                // Lấy thời gian cập nhật
                 const dateTime = xmlDoc.getElementsByTagName('DateTime')[0].textContent;
                 document.getElementById('updateTime').textContent = `Cập nhật lúc: ${dateTime}`;
                 
-                // Lấy tất cả các thông tin tỷ giá
                 const exrates = xmlDoc.getElementsByTagName('Exrate');
                 const tableBody = document.getElementById('currencyTable').getElementsByTagName('tbody')[0];
                 
-                // Duyệt qua tất cả tỷ giá và thêm vào bảng
                 for (let exrate of exrates) {
                     const row = document.createElement('tr');
                     
@@ -114,7 +108,6 @@
             }
         }
 
-        // Gọi hàm fetchCurrencyData khi trang được tải
         window.onload = fetchCurrencyData;
     </script>
 </body>
